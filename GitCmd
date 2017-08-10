@@ -10,3 +10,5 @@ git reset --hard HEAD^      // 回退到上一个版本
                  HEAD~100   // 回退到往上100个版本
 git reset --hard <commit id>// 如果记得回退前的版本id，此命令可以前进到此
 
+
+今天天气真好
