@@ -1,0 +1,12 @@
+git init                    // 初始化一个Git仓库
+git add <file>              // 添加文件到暂存区，可反复多次来添加多个文件
+git commit                  // 将暂存区的修改提交到Git仓库
+git commit -m "information" // 提交暂存区的修改并添加修改信息
+git status                  // 获取仓库当前的状态
+git diff                    // 显示所做的改动
+git log                     // 显示从近到远的提交日志
+git reset --hard HEAD^      // 回退到上一个版本
+                 HEAD^^     // 回退到上上个版本
+                 HEAD~100   // 回退到往上100个版本
+git reset --hard <commit id>// 如果记得回退前的版本id，此命令可以前进到此
+
