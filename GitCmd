@@ -1,3 +1,7 @@
+关于SSH KEY
+    ssh-keygen -t rsa -C "youremail@example.com"
+    这样将在.ssh目录下生成id_rsa和id_rsa.pub，在GitHub的Account settings中添加id_rsa.pub文件的内容。
+
 git init                    // 初始化一个Git仓库
 git add <file>              // 添加文件到暂存区，可反复多次来添加多个文件
 git commit                  // 将暂存区的修改提交到Git仓库
