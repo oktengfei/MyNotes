@@ -1,0 +1,19 @@
+#!/bin/sh
+echo -n "Setting up mdev:"
+set -e
+trap 'echo "failed"' EXIT
+/bin/ln -s /proc/self/fd /dev/fd
+/bin/ln -s /proc/self/fd/0 /dev/stdin
+/bin/ln -s /proc/self/fd/1 /dev/stdout
+/bin/ln -s /proc/self/fd/2 /dev/stderr
+
+#设置内核热插拔事件所触发的程序
+/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+
+#创建/dev 目录下的设备文件
+/sbin/mdev -s
+trap - EXIT
+echo "done"
+
+
+

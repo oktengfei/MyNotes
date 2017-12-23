@@ -1,0 +1,7 @@
+#!/bin/sh
+#运行/etc/init.d目录下所有以S开头的文件
+for s in /etc/init.d/S*; do
+    if [ -x $s ]; then
+       $s start
+    fi
+done

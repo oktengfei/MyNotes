@@ -1,0 +1,17 @@
+1、为嵌入式系统编译安装htop
+	由于htop依赖ncurses库，因此要先编译ncurses，然后编译htop
+	下载ncurses-6.0.tar.gz和htop-1.0.2.tar.gz
+	1). 编译ncurses-6.0:
+		mkdir __install
+		./configure --prefix=/home/fei/workspace/linux/program/htop/ncurses-6.0/__install/ CPPFLAGS="-P"  --host=arm-S3C2440-linux-gnueabi --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
+		make && make install
+	2). 编译htop
+		./configure --prefix=/home/fei/workspace/linux/program/htop/htop-1.0.2/__install/ --disable-unicode --host=arm-S3C2440-linux-gnueabi LDFLAGS=-L/home/fei//workspace/linux/program/htop/ncurses-6.0/__install/lib CPPFLAGS=-I/home/fei/workspace/linux/program/htop/ncurses-6.0/__install/include/ncurses
+		make && make install
+	3). 安装到目标文件系统
+		cd ...ncurses-6.0/__install/
+		cp -rfP lib/* /nfs_home/root/usr/lib
+		cp -frP share/* /nfs_home/root/usr/share
+		cd ...htop-1.0.2/__install/
+		cp -P bin/htop /nfs_home/root/usr/sbin
+		cp -frP share/* /nfs_home/root/usr/share

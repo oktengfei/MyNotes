@@ -1,0 +1,5 @@
+::askfirst:-/bin/sh
+
+#系统开机需要运行的第一个脚本
+::sysinit:/etc/init.d/rcS
+

@@ -45,10 +45,19 @@
 
 	rcS要执行的脚本大概有：
 		/etc/init.d/S00mountvirtfs
+		/etc/init.d/S05hotplug
 
 5、/etc/init.d/S00mountvirtfs
 	该脚本主要将内核中的devfs、procfs、tmpfs、devfs虚拟文件挂载到系统相应目录。
 
+6、/etc/init.d/S05hotplug
+	该脚本主要时创建/dev目录下的设备文件，实现热插拔功能，嵌入式主要采用mdev，mdev是一个简化版的udev，十分适合嵌入式系统使用。
+	mdev原理：
+		执行mdev -s： 以‘-s’为参数调用位于/sbin目录下的mdev(busybox的一个链接)，mdev扫描/sys/class和/sys/block中所有的类设备目录，如果目录中含有名为"dev"的文件，且文件中包含的是设备号，则mdev就利用这些信息为这个设备在/dev下创建设备节点文件。一般只在启动时才执行一次"mdev -s"。
+	mdev实现热插拔事件：
+		由于启动时执行了命令： echo /sbin/mdev > /proc/sys/kernel/hotplug，则当有热插拔事件时，内核就会调用/sbin/mdev。这时mdev 通过环境变量中的ACTION 和 DEVPATH，来确定此次热插拔事件的动作以及影响了/sys中的哪个目录。接着会看看这个目录下是否有“dev”的属性文件，如果有就利用这些信息为这个设备在/dev下创建设备节点文件。
+	mdev的配置文件为/etc/mdev.conf文件
+	
 
 
 
