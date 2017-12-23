@@ -1,0 +1,73 @@
+1、linux内核加载时要传入启动参数，例如：
+	bootargs=noinitrd root=/dev/nfs proto=tcp,nolock,nfsvers=3,rw nfsroot=192.168.0.6:/nfs_home/root,proto=tcp,nfsvers=3,nolock ip=192.168.0.88:192.168.0.6::255.255.255.0 console=ttySAC0,115200 init=/linuxrc mem=64M
+	1). init=...：		置内核执行的初始化进程名，如果该项没有设置，内核会按顺序尝试/etc/init，/bin/init，/sbin/init， /bin/sh，如果所有的都没找到，内核会抛出 kernel panic：的错误。 
+	2). nfsaddrs=...：	设置从网络启动时NFS的启动地址，以字符串的形式给出。
+	3). nfsroot=...：	设置网络启动时的NFS根名字，如果该字符串不是以 "/"、","、"."开始，默认指向“/tftp-boot”。 
+	4). root=...：		该参数告诉内核启动时使用哪个设备作为根文件系统。比如可以指定根文件为hda8：root=/dev/hda8。 
+	5). ro和rw：		ro参数告诉内核以只读方式加载根文件系统，以便进行文件系统完整性检查，比如运行fsck；rw参数告诉内核以读写方式加载根文件系统，这是默认值。 
+	6). mem=...：		限制内核使用的内存数量。早期BIOS设计为只能识别64M以下的内存，如果你的内存数量大于64M，你可以指明，如果你指明的数量超过了实际安装的内存数量，系统崩溃是迟早的事情。如：mem=0x1000000意味着有16M内存，如果是mem=0x6000000，就是96M内存了。 
+	7).panic=N:		默认情况，内核崩溃－－kernel panic 后会宕机而不会重启，你可以设置宕机多少秒之后重启机器；也可以在/proc/sys/kernel/panic文件里设置。 
+	8).noinitrd:		(仅当内核配置了选项 CONFIG_BLK_DEV_RAM和CONFIG_BLK_DEV_INITRD)现在的内核都可以支持initrd了，引导进程首先装载内核和一个初始化的ramdisk，然后内核将initrd转换成普通的ramdisk，也就是读写模式的根文件系统设备。然后Linuxrc执行，然后装载真正的根文件系统，之后ramdisk被卸载，最后执行启动序列，比如/sbin/init。
+						选项noinitrd告诉内核不执行上面的步骤，即使内核编译了initrd，而是把initrd的数据写到 /dev/initrd，只是这是一个一次性的设备。
+
+2、根据内核参数init=...以及noinitrd确定内核启动之后执行的第一个初始化进程，启动成功后会执行3。
+3、执行/etc/inittab脚本
+	BusyBox的init，其inittab文件内容与传统的是有区别的，传统的用于PC环境，支持运行级别。BusyBox的init主要用于嵌入式，所以没有运行级别的概念。
+	BusyBox的init对应的inittab文件内容：
+		#系统的第一个shell
+		console::askfirst:-/bin/sh 或者 ::askfirst:-/bin/sh
+		#系统开机需要运行的第一个脚本
+		::sysinit:/etc/init.d/rcS
+		#自动作为root账户登录
+		::respawn:-bin/login -f root
+		#系统关机运行的脚本
+		::shutdown:/etc/init.d/rcK
+		#系统重启运行程序或脚本
+		::restart:/sbin/init
+	如果不创建inittab，BusyBox会使用如下的默认配置项：
+		::ctrlaltdel:reboot
+		 ::shutdown:umount -a -r
+		 ::restart:init
+		 ::askfirst:-/bin/sh
+		 :/dev/vc/2:askfirst:-/bin/sh
+		 :/dev/vc/3:askfirst:-/bin/sh
+		 :/dev/vc/4:askfirst:-/bin/sh
+ 		::sysinit:/etc/init.d/rcS
+4、etc/init.d/rcS脚本
+	可以看到rcS脚本是由inittab或者默认配置来调用的，无极别的嵌入式rcS文件内容如下：
+	#!/bin/sh
+	#运行/etc/init.d目录下所有以S开头的文件
+	for s in /etc/init.d/S*; do
+		if [-x $s]; then
+			$s start
+		fi
+	done
+
+	rcS要执行的脚本大概有：
+		/etc/init.d/S00mountvirtfs
+
+5、/etc/init.d/S00mountvirtfs
+	该脚本主要将内核中的devfs、procfs、tmpfs、devfs虚拟文件挂载到系统相应目录。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
