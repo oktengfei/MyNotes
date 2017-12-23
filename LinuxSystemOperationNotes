@@ -1,0 +1,18 @@
+1、update-rc.d管理开机启动项。
+	添加启动项	
+		sudo update-rc.d apache2 defaults
+		sudo update-rc.d nginx defaults
+	删除启动项
+		sudo update-rc.d -f apache2 remove  
+		sudo update-rc.d -f nginx remove  
+	添加开机启动脚本
+		创建脚本并赋予执行权限
+			/home/test/blog/startBlog.sh
+			chmod +x /home/test/blog
+		在/etc/init.d目录创建链接到该脚本
+			ln -s /home/test/blog/startBlog.sh /etc/init.d/startBlog
+		进入/etc/init.d目录，添加链接文件到启动列表
+			update-rc.d startBlog defaults 99
+			其中的99表示启动顺序，取值范围是0-99。序号越大的越晚执行
+		移除启动脚本
+			update-rc.d -f startBlog remove
