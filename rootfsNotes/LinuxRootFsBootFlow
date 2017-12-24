@@ -14,8 +14,6 @@
 3、执行/etc/inittab脚本
 	BusyBox的init，其inittab文件内容与传统的是有区别的，传统的用于PC环境，支持运行级别。BusyBox的init主要用于嵌入式，所以没有运行级别的概念。
 	BusyBox的init对应的inittab文件内容：
-		#系统的第一个shell
-		console::askfirst:-/bin/sh 或者 ::askfirst:-/bin/sh
 		#系统开机需要运行的第一个脚本
 		::sysinit:/etc/init.d/rcS
 		#自动作为root账户登录
@@ -24,6 +22,8 @@
 		::shutdown:/etc/init.d/rcK
 		#系统重启运行程序或脚本
 		::restart:/sbin/init
+		#系统的第一个shell，如果使用自动作为root账户登录，则不可以加此项
+		console::askfirst:-/bin/sh 或者 ::askfirst:-/bin/sh
 	如果不创建inittab，BusyBox会使用如下的默认配置项：
 		::ctrlaltdel:reboot
 		 ::shutdown:umount -a -r
@@ -33,6 +33,8 @@
 		 :/dev/vc/3:askfirst:-/bin/sh
 		 :/dev/vc/4:askfirst:-/bin/sh
  		::sysinit:/etc/init.d/rcS
+	如果使用root账户登录，需要在/etc/下创建passwd文件，文件指明root的用户目录以及密码相关信息，内容如下
+		root::0:0:root:/root:/bin/sh
 4、etc/init.d/rcS脚本
 	可以看到rcS脚本是由inittab或者默认配置来调用的，无极别的嵌入式rcS文件内容如下：
 	#!/bin/sh
