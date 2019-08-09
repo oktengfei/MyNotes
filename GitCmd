@@ -15,6 +15,7 @@ git reset --hard HEAD^      // 回退到上一个版本
 git reset --hard <commit id>// 如果记得回退前的版本id，此命令可以前进到此
 git remote add origin git@server-name:path/repo-name.git   
                             // 将本地仓库的内容与远程仓库关联
+git remote update origin --prune // 更新远程分支列表
 git push -u origin master   // 把当前分支master推送到远程
                             // -u 参数表示把本地master分支与远程master关联
                             // -u 参数在第一次推送时使用
@@ -23,6 +24,7 @@ git branch                  // 查看分支
 git branch <name>           // 创建分支
 git checkout <name>         // 切换分支
 git checkout -b <name>      // 创建+切换分支
+git checkout -b xx origin/xx	// 从远程拉取xx分支作为本地xx分支
 git merge <name>            // 合并某分支到当前分支
 git branch -d <name>        // 删除分支
 git remote -v               // 查看远程仓库
